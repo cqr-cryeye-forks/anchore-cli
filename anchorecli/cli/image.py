@@ -478,6 +478,7 @@ def query_vuln(input_image, vuln_type, vendor_only):
             ecode = anchorecli.cli.utils.get_ecode(ret)
             if ret:
                 if ret["success"]:
+                    anchorecli.cli.utils.save_result(data=ret["payload"])
                     print(
                         anchorecli.cli.utils.format_output(
                             config,
@@ -531,18 +532,18 @@ def delete(input_image, force, all):
                     if ret["success"]:
                         payload = ret.get("payload")
                         if (
-                            isinstance(payload, dict)
-                            and payload.get("status") != "deleting"
+                                isinstance(payload, dict)
+                                and payload.get("status") != "deleting"
                         ):  # >= v.0.8.8
                             raise Exception(payload.get("detail"))
 
                         for image_detail in image["image_detail"]:
                             fulltag = (
-                                image_detail.pop("registry", "None")
-                                + "/"
-                                + image_detail.pop("repo", "None")
-                                + ":"
-                                + image_detail.pop("tag", "None")
+                                    image_detail.pop("registry", "None")
+                                    + "/"
+                                    + image_detail.pop("repo", "None")
+                                    + ":"
+                                    + image_detail.pop("tag", "None")
                             )
                             print(fulltag)
                     else:
@@ -580,8 +581,8 @@ def delete(input_image, force, all):
                 if ret["success"]:
                     payload = ret.get("payload")
                     if (
-                        isinstance(payload, dict)
-                        and payload.get("status") != "deleting"
+                            isinstance(payload, dict)
+                            and payload.get("status") != "deleting"
                     ):  # >= v.0.8.8
                         ecode = 1  # backwards compatibility with pre v0.8.0 error
                         raise Exception(payload.get("detail", "cannot delete image"))

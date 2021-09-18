@@ -212,8 +212,8 @@ def format_error_output(config, op, params, payload):
     if op in ["account_delete"]:
         if "Invalid account state change requested" in errdata.get("message", ""):
             obuf = (
-                obuf
-                + "\nNOTE: accounts must be disabled (anchore-cli account disable <account>) in order to be deleted\n"
+                    obuf
+                    + "\nNOTE: accounts must be disabled (anchore-cli account disable <account>) in order to be deleted\n"
             )
 
     return obuf
@@ -313,11 +313,11 @@ def format_output(config, op, params, payload):
 
                     imageId = image_detail.pop("imageId", "None")
                     fulltag = (
-                        image_detail.pop("registry", "None")
-                        + "/"
-                        + image_detail.pop("repo", "None")
-                        + ":"
-                        + image_detail.pop("tag", "None")
+                            image_detail.pop("registry", "None")
+                            + "/"
+                            + image_detail.pop("repo", "None")
+                            + ":"
+                            + image_detail.pop("tag", "None")
                     )
 
                     if params["full"]:
@@ -409,9 +409,9 @@ def format_output(config, op, params, payload):
                         if payload["content"]:
                             el = payload["content"][0]
                             if (
-                                el.get("package", None)
-                                and el.get("version", None)
-                                and el.get("location", None)
+                                    el.get("package", None)
+                                    and el.get("version", None)
+                                    and el.get("location", None)
                             ):
                                 header = ["Package", "Version", "Location"]
                                 t = plain_column_table(header)
@@ -758,11 +758,11 @@ def format_output(config, op, params, payload):
                                             if row[7]:
                                                 eval_whitelist_detail = row[7]
                                                 status_detail = (
-                                                    "whitelisted("
-                                                    + eval_whitelist_detail[
-                                                        "whitelist_name"
-                                                    ]
-                                                    + ")"
+                                                        "whitelisted("
+                                                        + eval_whitelist_detail[
+                                                            "whitelist_name"
+                                                        ]
+                                                        + ")"
                                                 )
                                         except:
                                             status_detail = row[6]
@@ -820,8 +820,8 @@ def format_output(config, op, params, payload):
 
                 # Set the code & db versions with the details from the first discovered API service that is up
                 if (
-                    service_record.get("servicename", "") == "apiext"
-                    and service_status == "up"
+                        service_record.get("servicename", "") == "apiext"
+                        and service_status == "up"
                 ):
                     service_detail = service_record.get("service_detail", {})
                     code_version = service_detail.get("version", None)
@@ -1080,12 +1080,12 @@ def format_output(config, op, params, payload):
         elif op in ["user_setpassword"]:
             ret = "Password (re)set success"
         elif (
-            op in ["delete_system_service"]
-            or re.match(".*_delete$", op)
-            or re.match(".*_activate$", op)
-            or re.match(".*_deactivate$", op)
-            or re.match(".*_enable$", op)
-            or re.match(".*_disable$", op)
+                op in ["delete_system_service"]
+                or re.match(".*_delete$", op)
+                or re.match(".*_activate$", op)
+                or re.match(".*_deactivate$", op)
+                or re.match(".*_enable$", op)
+                or re.match(".*_disable$", op)
         ):
             # NOTE this should always be the last in the if/elif conditional
             ret = "Success"
@@ -1191,28 +1191,28 @@ def format_output(config, op, params, payload):
             ret = t.get_string(sortby="Created At", reversesort=True) + "\n"
         elif op in ["get_correction"]:
             ret = (
-                "UUID: %s\nMatch: %s\nReplace: %s\nCreated At: %s\nDescription: %s\n"
-                % (
-                    str(payload["uuid"]),
-                    str(payload["match"]),
-                    str(payload["replace"]),
-                    str(payload["created_at"]),
-                    str(payload["description"]),
-                )
+                    "UUID: %s\nMatch: %s\nReplace: %s\nCreated At: %s\nDescription: %s\n"
+                    % (
+                        str(payload["uuid"]),
+                        str(payload["match"]),
+                        str(payload["replace"]),
+                        str(payload["created_at"]),
+                        str(payload["description"]),
+                    )
             )
         elif (
-            op
-            in [
-                "delete_system_service",
-                "test_webhook",
-                "add_correction",
-                "delete_correction",
-            ]
-            or re.match(".*_delete$", op)
-            or re.match(".*_activate$", op)
-            or re.match(".*_deactivate$", op)
-            or re.match(".*_enable$", op)
-            or re.match(".*_disable$", op)
+                op
+                in [
+                    "delete_system_service",
+                    "test_webhook",
+                    "add_correction",
+                    "delete_correction",
+                ]
+                or re.match(".*_delete$", op)
+                or re.match(".*_activate$", op)
+                or re.match(".*_deactivate$", op)
+                or re.match(".*_enable$", op)
+                or re.match(".*_disable$", op)
         ):
             # NOTE this should always be the last in the if/elif conditional
             ret = "Success"
@@ -1731,3 +1731,23 @@ def parse_dockerimage_string(instr):
         ret["pullstring"] = None
 
     return ret
+
+
+def save_result(data: dict):
+    with open('output.json', 'w') as f:
+        json.dump(__parse_result(data), f, indent=2)
+
+
+def __parse_result(data: dict):
+    N = 'N/A'
+    output = []
+    for vuln in data.get('vulnerabilities', []):
+        output.append({
+            'name': vuln.get('package_name', N),
+            'version': vuln.get('package_version', N),
+            'fixed': vuln.get('fix', N),
+            'vuln': vuln.get('vuln'),
+            'url': vuln.get('url'),
+            'severity': vuln.get('severity'),
+        })
+    return output
